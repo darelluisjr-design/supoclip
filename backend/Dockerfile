@@ -33,6 +33,8 @@ COPY pyproject.toml uv.lock* ./
 
 # New self-hosted setups can select CPU wheels without changing legacy builds.
 ARG BACKEND_CPU_ONLY=false
+# Large CUDA wheels can take longer than uv's 30s default on slow links.
+ENV UV_HTTP_TIMEOUT=600 UV_CONCURRENT_DOWNLOADS=4
 RUN uv venv .venv && \
     if [ "$BACKEND_CPU_ONLY" = "true" ]; then \
       uv sync --frozen --extra cpu; \
